@@ -1,31 +1,45 @@
 import 'package:flutter/material.dart';
+import '../services/recipe_service.dart';
 
 class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main Page'),
-        // Add search functionality to the app bar
-        // You can use a SearchBar widget or IconButton for search icon
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Navigate to the search page
-            },
-          ),
-        ],
+        title: const Text('Welcome to our recipe application!s'),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Display featured recipe
             // Display subset of recipe categories
-            // Add links to other pages (e.g., recipe category page)
+            FutureBuilder<List<Category>>(
+              future: RecipeService.getCategories(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // Placeholder for loading indicator
+                } else if (snapshot.hasError) {
+                  return Text('Error loading categories: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  return Wrap(
+                    spacing: 8.0, // Adjust spacing between buttons
+                    children: snapshot.data!.map((category) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          // Handle button press
+                        },
+                        child: Text(category.name),
+                      );
+                    }).toList(),
+                  );
+                } else {
+                  return const Text('No categories found'); // Placeholder for no data
+                }
+              },
+            ),
           ],
         ),
       ),

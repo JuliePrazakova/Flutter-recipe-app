@@ -21,29 +21,29 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Row(
             children: [
-              const Text( // Nadpis Recipe App
+              const Text( 
                 'Recipe App',
-                style: TextStyle(color: Colors.white), // Bílá barva textu
+                style: TextStyle(color: Colors.white), 
               ),
-              Expanded( // Roztáhneme prázdný widget, aby se vyhledávací pole a ikona posunuly doprava
+              Expanded( 
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end, // Zarovnání prvků na pravou stranu
+                    mainAxisAlignment: MainAxisAlignment.end, 
                     children: [
-                      const SizedBox( // Omezíme šířku vstupního pole na 100 px
+                      const SizedBox( 
                         width: 150,
                         child: TextField(
-                          style: TextStyle(color: Colors.white), // Barva textu
+                          style: TextStyle(color: Colors.white), 
                           decoration: InputDecoration(
-                            hintText: 'Search recipes...', // Textová nápověda
-                            hintStyle: TextStyle(color: Colors.white70), // Barva textu nápovědy
-                            border: InputBorder.none, // Žádné ohraničení
+                            hintText: 'Search recipes...', 
+                            hintStyle: TextStyle(color: Colors.white70), 
+                            border: InputBorder.none, 
                           ),
                         ),
                       ),
-                      IconButton( // Přidání ikony vyhledávání
-                        icon: const Icon(Icons.search, color: Colors.white), // Bílá barva ikony
+                      IconButton( 
+                        icon: const Icon(Icons.search, color: Colors.white), 
                         onPressed: () {
                           // Implement search functionality
                         },
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
               ),
             ],
           ),
-          backgroundColor: Colors.blue, // Změna barvy pozadí AppBar na modrou
+          backgroundColor: Colors.blue, 
         ),
         body: const MainPage(),
       ),
