@@ -1,0 +1,18 @@
+[
+    {
+      "id": 1,
+      "name": "Pasta",
+      "image": "assets/images/pasta.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Desserts",
+      "image": "assets/images/desserts.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Salads",
+      "image": "assets/images/salads.jpg"
+    }
+  ]
+  

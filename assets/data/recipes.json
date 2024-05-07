@@ -1,0 +1,44 @@
+[
+    {
+      "id": 1,
+      "name": "Spaghetti Carbonara",
+      "category": "Pasta",
+      "image": "assets/images/spaghetti_carbonara.jpg",
+      "ingredients": [
+        "Spaghetti",
+        "Eggs",
+        "Bacon",
+        "Parmesan cheese",
+        "Black pepper"
+      ],
+      "steps": [
+        "Cook spaghetti according to package instructions.",
+        "In a separate bowl, whisk eggs, grated Parmesan cheese, and black pepper.",
+        "Fry bacon until crispy, then add cooked spaghetti to the pan.",
+        "Pour egg mixture over spaghetti and toss until coated and creamy.",
+        "Serve immediately with additional Parmesan cheese and black pepper."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Chicken Alfredo",
+      "category": "Pasta",
+      "image": "assets/images/chicken_alfredo.jpg",
+      "ingredients": [
+        "Fettuccine",
+        "Chicken breast",
+        "Heavy cream",
+        "Garlic",
+        "Parmesan cheese"
+      ],
+      "steps": [
+        "Cook fettuccine according to package instructions.",
+        "Season chicken breast with salt and pepper, then cook until golden brown and cooked through.",
+        "In a separate pan, sauté minced garlic in olive oil until fragrant.",
+        "Add heavy cream and Parmesan cheese to the pan, stirring until thickened.",
+        "Slice cooked chicken breast and toss with the Alfredo sauce and cooked fettuccine.",
+        "Serve immediately with additional Parmesan cheese."
+      ]
+    }
+  ]
+  
