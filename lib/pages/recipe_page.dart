@@ -15,38 +15,38 @@ class RecipePage extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              recipe.name, // Zobrazíme název receptu
+              recipe.name, 
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16), // Oddělovač
+            const SizedBox(height: 16), 
             const Placeholder(
-              fallbackHeight: 200, // Placeholder pro obrázek receptu
+              fallbackHeight: 200, 
               fallbackWidth: double.infinity,
             ),
-            const SizedBox(height: 16), // Oddělovač
+            const SizedBox(height: 16), 
             const Text(
-              'Ingredients:', // Nadpis pro ingredience
+              'Ingredients:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8), // Oddělovač
+            const SizedBox(height: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: recipe.ingredients.map((ingredient) {
-                return Text('- $ingredient'); // Zobrazíme každou ingredienci
+                return Text('- $ingredient');
               }).toList(),
             ),
-            const SizedBox(height: 16), // Oddělovač
+            const SizedBox(height: 16), 
             const Text(
-              'Steps:', // Nadpis pro kroky
+              'Steps:', 
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8), // Oddělovač
+            const SizedBox(height: 8), 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: recipe.steps.asMap().entries.map((entry) {
                 int index = entry.key + 1;
                 String step = entry.value;
-                return Text('$index. $step'); // Zobrazíme každý krok
+                return Text('$index. $step'); 
               }).toList(),
             ),
           ],

@@ -4,7 +4,7 @@ import './recipe_page.dart';
 import 'app_bar.dart';
 
 class ListPage extends StatelessWidget {
-  final Category category; // Přijímáme kategorii jako vstupní argument
+  final Category category; 
 
   const ListPage({Key? key, required this.category}) : super(key: key);
 
@@ -13,26 +13,25 @@ class ListPage extends StatelessWidget {
     return Scaffold(
       appBar: const MyAppBar(),
       body: FutureBuilder<List<Recipe>>(
-        future: RecipeService.getRecipesForCategory(category.name), // Získáme recepty pro danou kategorii
+        future: RecipeService.getRecipesForCategory(category.name),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(), // Indikátor načítání
+              child: CircularProgressIndicator(), 
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error loading recipes: ${snapshot.error}'), // Chybová zpráva při načítání receptů
+              child: Text('Error loading recipes: ${snapshot.error}'), 
             );
           } else {
             Text(category.name);
-            final List<Recipe> recipes = snapshot.data!; // Seznam receptů
+            final List<Recipe> recipes = snapshot.data!;
             return ListView.builder(
               itemCount: recipes.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(recipes[index].name), // Název receptu
+                  title: Text(recipes[index].name), 
                   onTap: () {
-                    // Při kliknutí na recept navigujeme na stránku s detaily receptu
                     Navigator.push(
                       context,
                       MaterialPageRoute(

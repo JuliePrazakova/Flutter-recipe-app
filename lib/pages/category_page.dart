@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/recipe_service.dart'; 
 import 'app_bar.dart';
+import './list_page.dart';
+
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
@@ -10,29 +12,31 @@ class CategoryPage extends StatelessWidget {
     return Scaffold(
       appBar: const MyAppBar(),
       body: FutureBuilder<List<Category>>(
-        future: RecipeService.getCategories(), // Zavoláme metodu getCategories() ze service
+        future: RecipeService.getCategories(), 
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Pokud data ještě nejsou načtena, zobrazíme indikátor načítání
             return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            // Pokud došlo k chybě při načítání dat, zobrazíme chybovou zprávu
             return Center(
               child: Text('Error loading categories: ${snapshot.error}'),
             );
           } else {
             const Text('Recipe Categories');
-            // Pokud jsou data načtena úspěšně, zobrazíme seznam kategorií
-            final List<Category> categories = snapshot.data!; // Získáme seznam kategorií z snapshotu
+            final List<Category> categories = snapshot.data!; 
             return ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(categories[index].name), // Zobrazíme název kategorie
+                  title: Text(categories[index].name),
                   onTap: () {
-                    // Navigate to RecipeListPage for the selected category
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) => ListPage(category: categories[index]),
+                      ),
+                    );                      
                   },
                 );
               },
