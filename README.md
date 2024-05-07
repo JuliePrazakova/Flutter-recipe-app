@@ -1,16 +1,23 @@
-# second_project
+# Device-Agnostic Design Course Project I - 42ac52c7-4961-4933-b425-65d7cfc5f932
 
-A new Flutter project.
+## Recipe app
+### Description
+This recipe application simplifies cooking by providing a variety of recipes at your fingertips. Easily explore different cuisines, find ingredients, and follow simple steps to create delicious meals. With user-friendly features like search and categories, cooking has never been easier. Perfect for your school project!
 
-## Getting Started
+### 3 challenges during the development
+1. 
 
-This project is a starting point for a Flutter application.
+2. 
 
-A few resources to get you started if this is your first Flutter project:
+3. 
+### 3 key learning moments from working on the project
+1.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+2. 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+3. 
+
+### List of dependencies and their versions
+dependencies:
+
+dev_dependencies:
