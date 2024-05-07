@@ -70,4 +70,17 @@ class RecipeService {
       return [];
     }
   }
+
+  static Future<List<Recipe>> getRecipesForCategory(String categoryName) async {
+    try {
+      final List<Recipe> allRecipes = await getRecipes();
+      // Filtrujeme recepty podle kategorie
+      final List<Recipe> recipesForCategory = allRecipes.where((recipe) => recipe.category == categoryName).toList();
+      return recipesForCategory;
+    } catch (e) {
+      // Error handling
+      print('Error loading recipes for category: $e');
+      return [];
+    }
+  }
 }

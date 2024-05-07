@@ -1,39 +1,44 @@
 import 'package:flutter/material.dart';
-import '../services/recipe_service.dart'; 
-
+import '../services/recipe_service.dart';
+import './recipe_page.dart';
+import 'app_bar.dart';
 
 class ListPage extends StatelessWidget {
-  const ListPage({super.key});
+  final Category category; // Přijímáme kategorii jako vstupní argument
+
+  const ListPage({Key? key, required this.category}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recipes'),
-      ),
+      appBar: const MyAppBar(),
       body: FutureBuilder<List<Recipe>>(
-        future: RecipeService.getRecipes(), // Zavoláme metodu getRecipes() ze service
+        future: RecipeService.getRecipesForCategory(category.name), // Získáme recepty pro danou kategorii
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Pokud data ještě nejsou načtena, zobrazíme indikátor načítání
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(), // Indikátor načítání
             );
           } else if (snapshot.hasError) {
-            // Pokud došlo k chybě při načítání dat, zobrazíme chybovou zprávu
             return Center(
-              child: Text('Error loading recipes: ${snapshot.error}'),
+              child: Text('Error loading recipes: ${snapshot.error}'), // Chybová zpráva při načítání receptů
             );
           } else {
-            // Pokud jsou data načtena úspěšně, zobrazíme seznam receptů
-            final List<Recipe> recipes = snapshot.data!; // Získáme seznam receptů z snapshotu
+            Text(category.name);
+            final List<Recipe> recipes = snapshot.data!; // Seznam receptů
             return ListView.builder(
               itemCount: recipes.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(recipes[index].name), // Zobrazíme název receptu
+                  title: Text(recipes[index].name), // Název receptu
                   onTap: () {
-                    // Navigate to RecipePage for the selected recipe
+                    // Při kliknutí na recept navigujeme na stránku s detaily receptu
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RecipePage(recipe: recipes[index]),
+                      ),
+                    );
                   },
                 );
               },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/recipe_service.dart'; 
+import 'app_bar.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
@@ -7,9 +8,7 @@ class CategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recipe Categories'),
-      ),
+      appBar: const MyAppBar(),
       body: FutureBuilder<List<Category>>(
         future: RecipeService.getCategories(), // Zavoláme metodu getCategories() ze service
         builder: (context, snapshot) {
@@ -24,6 +23,7 @@ class CategoryPage extends StatelessWidget {
               child: Text('Error loading categories: ${snapshot.error}'),
             );
           } else {
+            const Text('Recipe Categories');
             // Pokud jsou data načtena úspěšně, zobrazíme seznam kategorií
             final List<Category> categories = snapshot.data!; // Získáme seznam kategorií z snapshotu
             return ListView.builder(

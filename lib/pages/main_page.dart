@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/recipe_service.dart';
+import './list_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -29,8 +30,12 @@ class MainPage extends StatelessWidget {
                     children: snapshot.data!.map((category) {
                       return ElevatedButton(
                         onPressed: () {
-                          // Handle button press
-                        },
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListPage(category: category),
+                            ),
+                          );                        },
                         child: Text(category.name),
                       );
                     }).toList(),
