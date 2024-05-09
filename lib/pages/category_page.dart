@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
-import '../services/recipe_service.dart'; 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/category_provider.dart'; // Import CategoryProvider
 import 'app_bar.dart';
 import './list_page.dart';
 
-
-class CategoryPage extends StatelessWidget {
-  const CategoryPage({super.key});
+class CategoryPage extends ConsumerWidget {
+  const CategoryPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categories = ref.watch(categoryProviderState); // Watch CategoryNotifier provider
+
     return Scaffold(
       appBar: const MyAppBar(),
-      body: FutureBuilder<List<Category>>(
-        future: RecipeService.getCategories(), 
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+      body: categories.isEmpty
+          ? const Center(
               child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error loading categories: ${snapshot.error}'),
-            );
-          } else {
-            const Text('Recipe Categories');
-            final List<Category> categories = snapshot.data!; 
-            return ListView.builder(
+            )
+          : ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 return ListTile(
@@ -34,16 +26,13 @@ class CategoryPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                      builder: (context) => ListPage(category: categories[index]),
+                        builder: (context) => ListPage(category: categories[index]),
                       ),
-                    );                      
+                    );
                   },
                 );
               },
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/recipe_service.dart';
+import '../models/recipe.dart';
 import './app_bar.dart';
 
 class RecipePage extends StatelessWidget {
