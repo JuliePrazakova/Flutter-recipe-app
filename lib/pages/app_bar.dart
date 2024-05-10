@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/recipe_provider.dart';
+import 'list_page.dart'; // Import the recipe provider
 
-class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const MyAppBar({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final searchController = TextEditingController(); // Controller for the search text field
+
     return AppBar(
       title: GestureDetector(
         onTap: () {
@@ -13,7 +18,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           }
         },
         child: const MouseRegion(
-          cursor: SystemMouseCursors.click, // Změna kurzoru na packu
+          cursor: SystemMouseCursors.click,
           child: Text(
             'Recipe App',
             style: TextStyle(
@@ -23,21 +28,28 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      centerTitle: true, // Zarovnat název na střed
+      centerTitle: true,
       backgroundColor: Colors.blue,
-      iconTheme: const IconThemeData(color: Colors.white), // Barva šipky zpět
+      iconTheme: const IconThemeData(color: Colors.white),
       actions: [
-        IconButton(
+       IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            // Implement search functionality
+            if (searchController.text.trim().isEmpty) return;
+            Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage(searchTerm: searchController.text)));
+
+            Future.delayed(Duration.zero, () {
+              searchController.clear();
+            });
           },
         ),
-        const SizedBox(
+
+        SizedBox(
           width: 150,
           child: TextField(
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
+            controller: searchController,
+            style: const TextStyle(color: Colors.white),
+            decoration: const InputDecoration(
               hintText: 'Search recipes...',
               hintStyle: TextStyle(color: Colors.white70),
               border: InputBorder.none,

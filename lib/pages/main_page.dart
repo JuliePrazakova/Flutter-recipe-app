@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:second_project/pages/recipe_page.dart';
-import '../services/recipe_service.dart';
+import '../models/categories.dart'; // Import Category model
 import './list_page.dart';
 import './category_page.dart';
+import '../providers/recipe_provider.dart';
+import '../providers/category_provider.dart'; // Import CategoryProvider
 
-class MainPage extends StatelessWidget {
+class MainPage extends ConsumerWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recipeProvider = ref.watch(recipeProviderState); // Watch RecipeNotifier provider
+    final categoryProvider = ref.watch(categoryProviderState); // Watch CategoryNotifier provider
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Welcome to our recipe application!'),
@@ -23,53 +29,39 @@ class MainPage extends StatelessWidget {
             Container(
               width: 300,
               margin: const EdgeInsets.all(10),
-              child: FutureBuilder<List<Recipe>>(
-                future: RecipeService.getRecipes(), // Fetch recipes
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // While data is loading
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    // If there's an error
-                    return Text('Error loading recipes: ${snapshot.error}');
-                  } else {
-                    // Once data is loaded, display the first recipe as the featured recipe
-                    final List<Recipe> recipes = snapshot.data!;
-                    final Recipe featuredRecipe = recipes.isNotEmpty ? recipes[0] : Recipe(id: -1, name: 'No recipes found', category: '', image: '', ingredients: [], steps: []);
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Featured Recipe',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+              child: recipeProvider.isEmpty
+                ? const Text('No recipes found')
+                : Card(
+                    margin: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Featured Recipe',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
                             ),
-                            const SizedBox(height: 8), // Spacing below the "Featured Recipe" title
-                            ListTile(
-                              title: Text(featuredRecipe.name),
-                              subtitle: Container(
-                                width: 80,
-                                height: 80,
-                                color: Colors.grey[300], // Placeholder color
-                              ),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => RecipePage(recipe: featuredRecipe)));
-                              },
+                          ),
+                          const SizedBox(height: 8), // Spacing below the "Featured Recipe" title
+                          ListTile(
+                            title: Text(recipeProvider.first.name),
+                            subtitle: Container(
+                              width: 80,
+                              height: 80,
+                              color: Colors.grey[300], // Placeholder color
                             ),
-                          ],
-                        ),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => RecipePage(recipe: recipeProvider.first)));
+                            },
+                          ),
+                        ],
                       ),
-                    );
-                  }
-                },
-              ),
+                    ),
+                  ),
             ),
 
             // Explore Categories section
@@ -94,31 +86,17 @@ class MainPage extends StatelessWidget {
                   ),
                   SizedBox(height: 16), // Spacing below Explore Categories title
                   // Display 3 categories
-                  FutureBuilder<List<Category>>(
-                    future: RecipeService.getCategories(), // Fetch categories
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        // While data is loading
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        // If there's an error
-                        return Text('Error loading categories: ${snapshot.error}');
-                      } else {
-                        // Once data is loaded, display the first 3 categories
-                        final List<Category> categories = snapshot.data!;
-                        final List<Category> firstThreeCategories = categories.length >= 3 ? categories.sublist(0, 3) : categories;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: firstThreeCategories.map((category) {
-                            return ListTile(
-                              title: Text(category.name),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage(category: category)));
-                              },
-                            );
-                          }).toList(),
-                        );
-                      }
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: categoryProvider.length,
+                    itemBuilder: (context, index) {
+                      final Category category = categoryProvider[index];
+                      return ListTile(
+                        title: Text(category.name),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage(category: category)));
+                        },
+                      );
                     },
                   ),
                 ],
