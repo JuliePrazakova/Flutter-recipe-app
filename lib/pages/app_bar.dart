@@ -55,6 +55,13 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           ),
         ),
+
+          IconButton(
+          icon: const Icon(Icons.login),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/login');
+          },
+        ),
       ],
     );
   }

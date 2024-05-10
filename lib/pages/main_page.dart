@@ -5,7 +5,8 @@ import '../models/categories.dart'; // Import Category model
 import './list_page.dart';
 import './category_page.dart';
 import '../providers/recipe_provider.dart';
-import '../providers/category_provider.dart'; // Import CategoryProvider
+import '../providers/category_provider.dart';
+import 'app_bar.dart'; // Import CategoryProvider
 
 class MainPage extends ConsumerWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -16,9 +17,7 @@ class MainPage extends ConsumerWidget {
     final categoryProvider = ref.watch(categoryProviderState); // Watch CategoryNotifier provider
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Welcome to our recipe application!'),
-      ),
+      appBar: const MyAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
