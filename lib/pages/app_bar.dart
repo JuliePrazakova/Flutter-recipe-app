@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/recipe_provider.dart';
 import 'list_page.dart'; // Import the recipe provider
 
 class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
