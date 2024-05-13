@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/categories.dart';
 import '../models/recipe.dart';
 
 class RecipeNotifier extends StateNotifier<List<Recipe>> {
-  RecipeNotifier() : super([]) {
+  final String userId;
+  RecipeNotifier({required this.userId}) : super([]) {
     _fetchRecipes();
   }
-
+  
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  static RecipeNotifier get notifier => RecipeNotifier();
 
   void _fetchRecipes() async {
     final snapshot = await _firestore.collection('recipes').get();
@@ -19,19 +19,55 @@ class RecipeNotifier extends StateNotifier<List<Recipe>> {
     }).toList();
 
     state = recipes;
-    print(recipes);
   }
 
-  void addRecipe(Recipe recipe) async {
-    final recipeData = recipe.toFirestore();
+  void updateRecipe(Recipe updatedRecipe) async {
+  final recipeData = updatedRecipe.toFirestore();
 
-    final recipeRef = await _firestore.collection('recipes').add(recipeData);
-    final newRecipe = Recipe.fromFirestore(recipeData, recipeRef.id);
-    state = [...state, newRecipe];
+  await _firestore.collection('recipes').doc(updatedRecipe.id).update(recipeData);
+
+  state = state.map((recipe) {
+    if (recipe.id == updatedRecipe.id) {
+      return updatedRecipe;
+    } else {
+      return recipe;
+    }
+  }).toList();
+}
+
+
+ void addRecipe(Recipe recipe) async {
+  if (userId == '') {
+      return;
   }
+  final recipeData = recipe.toFirestore();
 
-  void deleteRecipe(int id) async {
-    await _firestore.collection('recipes').doc(id.toString()).delete();
+  // Přidání receptu do kolekce 'recipes' ve Firestore a získání ID nového dokumentu
+  final recipeRef = await _firestore.collection('recipes').add(recipeData);
+
+  // Získání ID nového dokumentu
+  final newRecipeId = recipeRef.id;
+
+  // Vytvoření nového receptu s ID a uložení do stavu
+  final newRecipe = Recipe(
+    id: newRecipeId,
+    name: recipe.name,
+    category: recipe.category,
+    image: recipe.image,
+    ingredients: recipe.ingredients,
+    steps: recipe.steps,
+    userId: recipe.userId,
+  );
+  state = [...state, newRecipe];
+}
+
+
+  void deleteRecipe(String id) async {
+    if (userId == '') {
+      return;
+    }
+
+    await _firestore.collection('recipes').doc(id).delete();
     state = state.where((recipe) => recipe.id != id).toList();
   }
 
@@ -39,11 +75,6 @@ class RecipeNotifier extends StateNotifier<List<Recipe>> {
     final List<Recipe> filteredRecipes = state
         .where((recipe) => recipe.name.toLowerCase().contains(searchTerm.toLowerCase()))
         .toList();
-
-    print('Tady je print:');
-    print('tady je searchTerm:' + searchTerm);
-    print(filteredRecipes);
-
     return filteredRecipes;
   }
 
@@ -53,5 +84,13 @@ class RecipeNotifier extends StateNotifier<List<Recipe>> {
   }
 }
 
-final recipeProviderState =
-    StateNotifierProvider<RecipeNotifier, List<Recipe>>((ref) => RecipeNotifier());
+final recipeProviderState = StateNotifierProvider.autoDispose<RecipeNotifier, List<Recipe>>(
+  (ref) {
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid ?? '';
+    
+    return RecipeNotifier(userId: userId);
+  },
+);
+
+

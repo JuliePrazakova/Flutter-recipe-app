@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:second_project/pages/recipe_page.dart';
-import '../models/categories.dart'; // Import Category model
+import '../models/categories.dart'; 
 import './list_page.dart';
 import './category_page.dart';
 import '../providers/recipe_provider.dart';
 import '../providers/category_provider.dart';
-import 'app_bar.dart'; // Import CategoryProvider
+import 'app_bar.dart'; 
 
 class MainPage extends ConsumerWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recipeProvider = ref.watch(recipeProviderState); // Watch RecipeNotifier provider
-    final categoryProvider = ref.watch(categoryProviderState); // Watch CategoryNotifier provider
+    final recipeProvider = ref.watch(recipeProviderState); 
+    final categoryProvider = ref.watch(categoryProviderState); 
 
     return Scaffold(
       appBar: const MyAppBar(),
@@ -24,6 +24,7 @@ class MainPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            
             // Display featured recipe
             Container(
               width: 300,
@@ -45,13 +46,13 @@ class MainPage extends ConsumerWidget {
                               fontSize: 18,
                             ),
                           ),
-                          const SizedBox(height: 8), // Spacing below the "Featured Recipe" title
+                          const SizedBox(height: 8), 
                           ListTile(
                             title: Text(recipeProvider.first.name),
                             subtitle: Container(
                               width: 80,
                               height: 80,
-                              color: Colors.grey[300], // Placeholder color
+                              color: Colors.grey[300],
                             ),
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => RecipePage(recipe: recipeProvider.first)));
@@ -83,7 +84,9 @@ class MainPage extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16), // Spacing below Explore Categories title
+
+                  const SizedBox(height: 16), 
+
                   // Display 3 categories
                   ListView.builder(
                     shrinkWrap: true,

@@ -27,7 +27,7 @@ class RecipeApp extends ConsumerWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const MainPage(),
-        '/login': (context) => LoginPage(),
+        '/login': (context) => const LoginPage(),
       },
     );
   }

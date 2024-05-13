@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseAuth auth = FirebaseAuth.instance;
 
     return Scaffold(
       body: Center(
@@ -13,14 +15,14 @@ class LoginPage extends StatelessWidget {
           children: [
             ElevatedButton.icon(
               icon: const Icon(Icons.login),
-              label: Text(_auth.currentUser == null ? 'Login anonymously' : 'Logout'),
+              label: Text(auth.currentUser == null ? 'Login anonymously' : 'Logout'),
               onPressed: () async {
-                if (_auth.currentUser == null) {
+                if (auth.currentUser == null) {
                   // Pokud uživatel není přihlášen, provede se přihlášení
-                  await _auth.signInAnonymously();
+                  await auth.signInAnonymously();
                 } else {
                   // Pokud uživatel je přihlášen, provede se odhlášení
-                  await _auth.signOut();
+                  await auth.signOut();
                 }
                 // Po přihlášení nebo odhlášení se přesměruje zpět na úvodní stránku
                 Navigator.of(context).pushReplacementNamed('/');

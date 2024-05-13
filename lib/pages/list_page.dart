@@ -4,13 +4,12 @@ import '../models/categories.dart';
 import '../models/recipe.dart';
 import './recipe_page.dart';
 import 'app_bar.dart';
-import '../providers/recipe_provider.dart'; // Import RecipeProvider
-
+import '../providers/recipe_provider.dart'; 
 class ListPage extends ConsumerWidget {
   final Category? category;
   final String? searchTerm;
 
-  const ListPage({Key? key, this.category, this.searchTerm}) : super(key: key);
+  const ListPage({super.key, this.category, this.searchTerm});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
