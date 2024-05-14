@@ -53,7 +53,7 @@ class AddRecipePage extends ConsumerWidget {
                   maxLines: null,
                 ),
                 if (showErrorMessages)
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(top: 8.0),
                     child: Text(
                       'You need to fill in all information',
@@ -66,7 +66,7 @@ class AddRecipePage extends ConsumerWidget {
                     if (nameController.text.isEmpty ||
                         ingredientsController.text.isEmpty ||
                         stepsController.text.isEmpty) {
-                      ref.read(showErrorMessagesProvider.notifier).toggle();
+                      ref.read(showErrorMessagesProvider.notifier).setTrue();
                       return;
                     }
                     final newRecipe = Recipe(
@@ -78,6 +78,7 @@ class AddRecipePage extends ConsumerWidget {
                       steps: stepsController.text.split('\n'),
                       userId: userId ?? '',
                     );
+                    ref.read(showErrorMessagesProvider.notifier).setFalse();
                     ref.watch(recipeProviderState.notifier).addRecipe(newRecipe);
                     Navigator.pop(context);
                   },
@@ -97,7 +98,10 @@ final showErrorMessagesProvider = StateNotifierProvider<ShowErrorMessages, bool>
 class ShowErrorMessages extends StateNotifier<bool> {
   ShowErrorMessages() : super(false);
 
-  void toggle() {
-    state = !state;
+ void setTrue() {
+    state = true;
+  }
+  void setFalse() {
+    state = false;
   }
 }

@@ -6,7 +6,7 @@ import '../models/recipe.dart';
 class RecipeDetailsPage extends ConsumerWidget {
   final Recipe recipe;
 
-  const RecipeDetailsPage({Key? key, required this.recipe}) : super(key: key);
+  const RecipeDetailsPage({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,23 +47,43 @@ class RecipeDetailsPage extends ConsumerWidget {
               decoration: const InputDecoration(labelText: 'Steps'),
               maxLines: null,
             ),
+            Consumer(
+              builder: (context, ref, child) {
+                final showErrorMessages = ref.watch(showErrorMessagesProvider);
+
+                if (showErrorMessages) {
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'You need to fill in all information',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
             ElevatedButton(
               onPressed: () {
-                final updatedRecipe = Recipe(
-                      id: recipe.id,
-                      name: nameController.text,
-                      category: categoryController.text,
-                      image: imageController.text,
-                      ingredients: ingredientsController.text.split('\n'),
-                      steps: stepsController.text.split('\n'),
-                      userId: recipe.userId,
-                    );
-                if (updatedRecipe.name == '' || updatedRecipe.ingredients.isEmpty || updatedRecipe.steps.isEmpty) {
-                  print('Fill in all information please!');
-                  const Text('Fill in all information please!');
+                if (nameController.text.isEmpty ||
+                    ingredientsController.text.isEmpty ||
+                    stepsController.text.isEmpty) {
+                  ref.read(showErrorMessagesProvider.notifier).setTrue();
+                  return;
                 } else {
-                    ref.watch(recipeProviderState.notifier).updateRecipe(updatedRecipe);
-                    Navigator.pop(context);
+                  final updatedRecipe = Recipe(
+                    id: recipe.id,
+                    name: nameController.text,
+                    category: categoryController.text,
+                    image: imageController.text,
+                    ingredients: ingredientsController.text.split('\n'),
+                    steps: stepsController.text.split('\n'),
+                    userId: recipe.userId,
+                  );
+                  ref.read(showErrorMessagesProvider.notifier).setFalse();
+                  ref.watch(recipeProviderState.notifier).updateRecipe(updatedRecipe);
+                  Navigator.pop(context);
                 }
               },
               child: const Text('Save'),
@@ -72,5 +92,18 @@ class RecipeDetailsPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+final showErrorMessagesProvider = StateNotifierProvider<ShowErrorMessages, bool>((ref) => ShowErrorMessages());
+
+class ShowErrorMessages extends StateNotifier<bool> {
+  ShowErrorMessages() : super(false);
+
+  void setTrue() {
+    state = true;
+  }
+  void setFalse() {
+    state = false;
   }
 }
