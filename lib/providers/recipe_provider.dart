@@ -23,18 +23,10 @@ class RecipeNotifier extends StateNotifier<List<Recipe>> {
 
   void updateRecipe(Recipe updatedRecipe) async {
     if (userId == '') {
-      print('update didnt work out');
       return;
     }
-    print('updatedRecipe: ${updatedRecipe.toString()}');
 
     final recipeData = updatedRecipe.toFirestore();
-
-    print('recipes ID:' + updatedRecipe.id);
-
-    recipeData.forEach((key, value) {
-      print('$key: $value');
-    });
 
   await _firestore.collection('recipes').doc(updatedRecipe.id).update(recipeData);
 
