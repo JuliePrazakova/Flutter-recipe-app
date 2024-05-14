@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'list_page.dart';
 import 'user_page.dart'; 
 
+final searchTermProvider = StateProvider<String>((ref) => '');
+
 class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const MyAppBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchController = TextEditingController();
+    final TextEditingController searchController = TextEditingController();
     final FirebaseAuth auth = FirebaseAuth.instance;
 
     return AppBar(
@@ -37,8 +39,10 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
        IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            if (searchController.text.trim().isEmpty) return;
-            Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage(searchTerm: searchController.text)));
+            ref
+                .watch(searchTermProvider.notifier)
+                .update((state) => searchController.text);
+            Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage()));
 
             Future.delayed(Duration.zero, () {
               searchController.clear();

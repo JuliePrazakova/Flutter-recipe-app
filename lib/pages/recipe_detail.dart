@@ -11,7 +11,7 @@ class RecipeDetailsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController nameController = TextEditingController(text: recipe.name);
-    final TextEditingController categoryController = TextEditingController(text: recipe.category);
+    final TextEditingController categoryController = TextEditingController(text: recipe.categoryId);
     final TextEditingController imageController = TextEditingController(text: recipe.image);
     final TextEditingController ingredientsController = TextEditingController(text: recipe.ingredients.join('\n'));
     final TextEditingController stepsController = TextEditingController(text: recipe.steps.join('\n'));
@@ -75,7 +75,7 @@ class RecipeDetailsPage extends ConsumerWidget {
                   final updatedRecipe = Recipe(
                     id: recipe.id,
                     name: nameController.text,
-                    category: categoryController.text,
+                    categoryId: categoryController.text,
                     image: imageController.text,
                     ingredients: ingredientsController.text.split('\n'),
                     steps: stepsController.text.split('\n'),

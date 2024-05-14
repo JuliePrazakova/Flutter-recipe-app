@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/category_provider.dart';
 import '../providers/recipe_provider.dart';
 import '../models/recipe.dart';
 
@@ -11,11 +12,11 @@ class AddRecipePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final TextEditingController nameController = TextEditingController();
-    final TextEditingController categoryController = TextEditingController();
     final TextEditingController imageController = TextEditingController();
     final TextEditingController ingredientsController = TextEditingController();
     final TextEditingController stepsController = TextEditingController();
     final String? userId = _auth.currentUser?.uid;
+    final categoryController = StateController<String>('');
 
     return Scaffold(
       appBar: AppBar(
@@ -26,6 +27,7 @@ class AddRecipePage extends ConsumerWidget {
         child: Consumer(
           builder: (context, ref, child) {
             final showErrorMessages = ref.watch(showErrorMessagesProvider);
+            final categories = ref.watch(categoryProviderState);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,10 +35,6 @@ class AddRecipePage extends ConsumerWidget {
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(labelText: 'Recipe Name'),
-                ),
-                TextField(
-                  controller: categoryController,
-                  decoration: const InputDecoration(labelText: 'Category'),
                 ),
                 TextField(
                   controller: imageController,
@@ -60,6 +58,20 @@ class AddRecipePage extends ConsumerWidget {
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final category = categories[index];
+                      return ListTile(
+                        title: Text(category.name),
+                        onTap: () {
+                          categoryController.state = category.id;
+                        },
+                      );
+                    },
+                  ),
+                ),
 
                 ElevatedButton(
                   onPressed: () {
@@ -72,7 +84,7 @@ class AddRecipePage extends ConsumerWidget {
                     final newRecipe = Recipe(
                       id: '',
                       name: nameController.text,
-                      category: categoryController.text,
+                      categoryId: categoryController.state,
                       image: imageController.text,
                       ingredients: ingredientsController.text.split('\n'),
                       steps: stepsController.text.split('\n'),
