@@ -4,23 +4,23 @@ import '../models/categories.dart';
 import '../models/recipe.dart';
 import './recipe_page.dart';
 import 'app_bar.dart';
-import '../providers/recipe_provider.dart'; // Import RecipeProvider
-
+import '../providers/recipe_provider.dart'; 
 class ListPage extends ConsumerWidget {
   final Category? category;
-  final String? searchTerm;
-
-  const ListPage({Key? key, this.category, this.searchTerm}) : super(key: key);
+ 
+  const ListPage({super.key, this.category});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<Recipe> recipes = [];
 
-    if (searchTerm != null && searchTerm!.isNotEmpty) {
-      recipes = ref.watch(recipeProviderState.notifier).searchRecipes(searchTerm!);
-    } else if (category != null) {
+    final String? searchTerm = ref.watch(searchTermProvider);
+
+   if (category != null) {
       recipes = ref.watch(recipeProviderState.notifier).getRecipesForCategory(category!);
-    }
+    } else if (searchTerm != null && searchTerm.isNotEmpty) {
+      recipes = ref.watch(recipeProviderState.notifier).searchRecipes(searchTerm);
+    }  
 
      return Scaffold(
       appBar: const MyAppBar(),

@@ -1,7 +1,7 @@
 class Recipe {
   final String id;
   final String name;
-  final String category;
+  final String categoryId;
   final String image;
   final List<String> ingredients;
   final List<String> steps;
@@ -10,7 +10,7 @@ class Recipe {
   Recipe({
     required this.id,
     required this.name,
-    required this.category,
+    required this.categoryId,
     required this.image,
     required this.ingredients,
     required this.steps,
@@ -21,7 +21,7 @@ class Recipe {
     return Recipe(
       id: id,
       name: data['name'],
-      category: data['category'],
+      categoryId: data['categoryId'],
       image: data['image'],
       ingredients: List<String>.from(data['ingredients']),
       steps: List<String>.from(data['steps']),
@@ -32,7 +32,7 @@ class Recipe {
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
-      'category': category,
+      'categoryId': categoryId,
       'image': image,
       'ingredients': ingredients,
       'steps': steps,

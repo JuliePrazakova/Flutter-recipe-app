@@ -3,9 +3,9 @@ import '../models/recipe.dart';
 import './app_bar.dart';
 
 class RecipePage extends StatelessWidget {
-  final Recipe recipe; // Přijímáme recept jako vstupní argument
+  final Recipe recipe; 
 
-  const RecipePage({required this.recipe, Key? key}) : super(key: key);
+  const RecipePage({required this.recipe, super.key});
 
   @override
   Widget build(BuildContext context) {

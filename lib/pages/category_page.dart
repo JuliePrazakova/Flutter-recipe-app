@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/category_provider.dart'; // Import CategoryProvider
+import '../providers/category_provider.dart'; 
 import 'app_bar.dart';
 import './list_page.dart';
 
 class CategoryPage extends ConsumerWidget {
-  const CategoryPage({Key? key}) : super(key: key);
+  const CategoryPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categories = ref.watch(categoryProviderState); // Watch CategoryNotifier provider
+    final categories = ref.watch(categoryProviderState);
 
     return Scaffold(
       appBar: const MyAppBar(),

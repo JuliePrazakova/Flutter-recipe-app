@@ -1,13 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'list_page.dart'; // Import the recipe provider
+import 'list_page.dart';
+import 'user_page.dart'; 
+
+final searchTermProvider = StateProvider<String>((ref) => '');
 
 class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  const MyAppBar({Key? key}) : super(key: key);
+  const MyAppBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchController = TextEditingController(); // Controller for the search text field
+    final TextEditingController searchController = TextEditingController();
+    final FirebaseAuth auth = FirebaseAuth.instance;
 
     return AppBar(
       title: GestureDetector(
@@ -34,8 +39,10 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
        IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            if (searchController.text.trim().isEmpty) return;
-            Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage(searchTerm: searchController.text)));
+            ref
+                .watch(searchTermProvider.notifier)
+                .update((state) => searchController.text);
+            Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage()));
 
             Future.delayed(Duration.zero, () {
               searchController.clear();
@@ -55,6 +62,14 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           ),
         ),
+
+        if (auth.currentUser != null)
+          IconButton(
+            icon: const Icon(Icons.account_circle),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const UserPage()));
+            },
+          ),
 
           IconButton(
           icon: const Icon(Icons.login),
