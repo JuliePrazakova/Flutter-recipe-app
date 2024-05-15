@@ -80,6 +80,7 @@ class RecipeDetailsPage extends ConsumerWidget {
                     ingredients: ingredientsController.text.split('\n'),
                     steps: stepsController.text.split('\n'),
                     userId: recipe.userId,
+                    fav: recipe.fav,
                   );
                   ref.read(showErrorMessagesProvider.notifier).setFalse();
                   ref.watch(recipeProviderState.notifier).updateRecipe(updatedRecipe);

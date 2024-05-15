@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import '../models/categories.dart';
 import '../providers/category_provider.dart';
 import '../providers/recipe_provider.dart';
 import '../models/recipe.dart';
@@ -27,7 +29,7 @@ class AddRecipePage extends ConsumerWidget {
         child: Consumer(
           builder: (context, ref, child) {
             final showErrorMessages = ref.watch(showErrorMessagesProvider);
-            final categories = ref.watch(categoryProviderState);
+            final pagingController = ref.watch(categoryProviderState);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,18 +60,19 @@ class AddRecipePage extends ConsumerWidget {
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return ListTile(
-                        title: Text(category.name),
-                        onTap: () {
-                          categoryController.state = category.id;
-                        },
-                      );
-                    },
+                 Expanded(
+                  child: PagedListView<int, Category>(
+                    pagingController: pagingController,
+                    builderDelegate: PagedChildBuilderDelegate<Category>(
+                      itemBuilder: (context, category, index) {
+                        return ListTile(
+                          title: Text(category.name),
+                          onTap: () {
+                            categoryController.state = category.id;
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
 
@@ -89,6 +92,7 @@ class AddRecipePage extends ConsumerWidget {
                       ingredients: ingredientsController.text.split('\n'),
                       steps: stepsController.text.split('\n'),
                       userId: userId ?? '',
+                      fav: [],
                     );
                     ref.read(showErrorMessagesProvider.notifier).setFalse();
                     ref.watch(recipeProviderState.notifier).addRecipe(newRecipe);

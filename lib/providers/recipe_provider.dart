@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../models/categories.dart';
 import '../models/recipe.dart';
 import './user_provider.dart';
@@ -21,27 +22,9 @@ class RecipeNotifier extends StateNotifier<List<Recipe>> {
     state = recipes;
   }
 
-  void updateRecipe(Recipe updatedRecipe) async {
-    if (userId == '') {
-      return;
-    }
-
-    final recipeData = updatedRecipe.toFirestore();
-
-    await _firestore.collection('recipes').doc(updatedRecipe.id).update(recipeData);
-
-    state = state.map((recipe) {
-      if (recipe.id == updatedRecipe.id) {
-        return updatedRecipe;
-      } else {
-        return recipe;
-      }
-    }).toList();
-  }
-
   void addRecipe(Recipe recipe) async {
     if (userId == '') {
-        return;
+      return;
     }
     final recipeData = recipe.toFirestore();
     final recipeRef = await _firestore.collection('recipes').add(recipeData);
@@ -55,6 +38,7 @@ class RecipeNotifier extends StateNotifier<List<Recipe>> {
       ingredients: recipe.ingredients,
       steps: recipe.steps,
       userId: recipe.userId,
+      fav: recipe.fav,
     );
     state = [...state, newRecipe];
   }
@@ -75,9 +59,93 @@ class RecipeNotifier extends StateNotifier<List<Recipe>> {
     return filteredRecipes;
   }
 
-  List<Recipe> getRecipesForCategory(Category category) {
-    return state.where((recipe) => recipe.categoryId == category.id).toList();
+PagingController<int, Recipe> getRecipesForCategory(Category category) {
+  final pagingController = PagingController<int, Recipe>(firstPageKey: 0);
+
+  pagingController.addPageRequestListener((pageKey) {
+    Query query = _firestore.collection('recipes').where('categoryId', isEqualTo: category.id);
+
+    // Pouze jedno volání limit(20)
+    if (pageKey != 0) {
+      final lastRecipe = pagingController.itemList?.isNotEmpty ?? false ? pagingController.itemList!.last.name : null;
+      query = query.where(FieldPath.documentId, isGreaterThan: lastRecipe);
+    }
+
+    query.get().then((snapshot) {
+      final recipes = snapshot.docs.map((doc) {
+        return Recipe.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+
+      final isLastPage = recipes.length < 20;
+
+      if (isLastPage) {
+        pagingController.appendLastPage(recipes);
+      } else {
+        pagingController.appendPage(recipes, pageKey + 1);
+      }
+    }).catchError((error) {
+      print(error);
+    });
+  });
+
+  return pagingController;
+}
+
+
+
+  void updateRecipe(Recipe updatedRecipe) async {
+    if (userId == '' || userId != updatedRecipe.userId) {
+      return;
+    } else if(userId == updatedRecipe.userId) {
+      final recipeData = updatedRecipe.toFirestore();
+
+      await _firestore.collection('recipes').doc(updatedRecipe.id).update(recipeData);
+
+      state = state.map((recipe) {
+        if (recipe.id == updatedRecipe.id) {
+          return updatedRecipe;
+        } else {
+          return recipe;
+        }
+      }).toList();
+    }
   }
+
+  void updateFavourite(Recipe recipe) async {
+    if (userId == '') {
+      return;
+    }
+
+    final List<String> favorites = List<String>.from(recipe.fav);
+
+    if (favorites.contains(userId)) {
+      favorites.remove(userId);
+    } else {
+      favorites.add(userId);
+    }
+
+    final updatedRecipe = Recipe(
+      id: recipe.id,
+      name: recipe.name,
+      categoryId: recipe.categoryId,
+      image: recipe.image,
+      ingredients: recipe.ingredients,
+      steps: recipe.steps,
+      userId: recipe.userId,
+      fav: favorites,
+    );
+    final recipeData = updatedRecipe.toFirestore();
+
+    await _firestore.collection('recipes').doc(updatedRecipe.id).update(recipeData);
+
+    state = state.map((recipe) {
+      if (recipe.id == updatedRecipe.id) {
+        return updatedRecipe;
+      } else {
+        return recipe;
+      }
+    }).toList();
+  } 
 }
 
 final recipeProviderState = StateNotifierProvider.autoDispose<RecipeNotifier, List<Recipe>>(

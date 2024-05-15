@@ -1,3 +1,4 @@
+
 class Recipe {
   final String id;
   final String name;
@@ -6,6 +7,7 @@ class Recipe {
   final List<String> ingredients;
   final List<String> steps;
   final String userId;
+  final List<dynamic> fav;
 
   Recipe({
     required this.id,
@@ -15,6 +17,7 @@ class Recipe {
     required this.ingredients,
     required this.steps,
     required this.userId,
+    required this.fav,
   });
 
   factory Recipe.fromFirestore(Map<String, dynamic> data, String id) {
@@ -26,6 +29,7 @@ class Recipe {
       ingredients: List<String>.from(data['ingredients']),
       steps: List<String>.from(data['steps']),
       userId: data['userId'],
+      fav: List<String>.from(data['fav']),
     );
   }
 
@@ -37,6 +41,7 @@ class Recipe {
       'ingredients': ingredients,
       'steps': steps,
       'userId': userId,
+      'fav': fav,
     };
   }
 }
