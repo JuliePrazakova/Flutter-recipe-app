@@ -5,6 +5,7 @@ import '../models/recipe.dart';
 import './app_bar.dart';
 import '../providers/recipe_provider.dart';
 
+
 class RecipePage extends ConsumerWidget {
   final Recipe recipe;
 
@@ -14,12 +15,19 @@ class RecipePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = FirebaseAuth.instance.currentUser;
     final isUserLoggedIn = user != null;
-    final isFavorite = ref.watch(recipeProviderState)
-        .any((r) => r.id == recipe.id && r.fav.contains(user?.uid));
-    final favCount = ref.watch(recipeProviderState)
-        .where((r) => r.id == recipe.id)
-        .map((r) => r.fav.length)
-        .first;
+    final recipeProvider = ref.watch(recipeProviderState.notifier);
+
+    final isFavorite = ref
+        .watch(recipeProviderState)
+        .firstWhere((r) => r.id == recipe.id)
+        .fav
+        .contains(user?.uid);
+
+    final favCount = ref
+        .watch(recipeProviderState)
+        .firstWhere((r) => r.id == recipe.id)
+        .fav
+        .length;
 
     return Scaffold(
       appBar: const MyAppBar(),
@@ -29,23 +37,22 @@ class RecipePage extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                
                 IconButton(
-                    icon: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : null,
-                    ),
-                    onPressed: () {
-                      if (!isUserLoggedIn) return;
-                      ref.watch(recipeProviderState.notifier).updateFavourite(recipe);
-                    },
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : null,
                   ),
+                  onPressed: () async {
+                    if (!isUserLoggedIn) return;                  
+                    recipeProvider.updateFavourite(recipe);
+                  },
+                ),
                 Text('$favCount'),
                 Text(
                   recipe.name,
                   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 48), // Vytvořit mezeru pro ikonu srdíčka
+                SizedBox(width: 48),
               ],
             ),
             SizedBox(height: 16),

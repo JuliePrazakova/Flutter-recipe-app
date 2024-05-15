@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -15,9 +16,10 @@ class ListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = FirebaseAuth.instance.currentUser;
     final isUserLoggedIn = ref.watch(userProvider).value != null;
     final String? searchTerm = ref.watch(searchTermProvider);
-
+    
     if (category != null) {
       return Scaffold(
         appBar: const MyAppBar(),
@@ -25,8 +27,17 @@ class ListPage extends ConsumerWidget {
           pagingController: ref.watch(recipeProviderState.notifier).getRecipesForCategory(category!),
           builderDelegate: PagedChildBuilderDelegate<Recipe>(
             itemBuilder: (context, recipe, index) {
-              final isFavorite = recipe.fav.contains(ref.watch(userProvider).value?.uid);
-              final favCount = recipe.fav.length;
+               final isFavorite = ref
+                    .watch(recipeProviderState)
+                    .firstWhere((r) => r.id == recipe.id)
+                    .fav
+                    .contains(user?.uid);
+
+                final favCount = ref
+                    .watch(recipeProviderState)
+                    .firstWhere((r) => r.id == recipe.id)
+                    .fav
+                    .length;
 
               return ListTile(
                 title: Row(
@@ -41,6 +52,7 @@ class ListPage extends ConsumerWidget {
                       onPressed: () {
                         if (!isUserLoggedIn) return;
                         ref.read(recipeProviderState.notifier).updateFavourite(recipe);
+                        Navigator.pushNamed(context, '/user'); 
                       },
                     ),
                     Text('$favCount'),
@@ -67,8 +79,17 @@ class ListPage extends ConsumerWidget {
           itemCount: recipes.length,
           itemBuilder: (context, index) {
             final recipe = recipes[index];
-            final isFavorite = recipe.fav.contains(ref.watch(userProvider).value?.uid);
-            final favCount = recipe.fav.length;
+               final isFavorite = ref
+                    .watch(recipeProviderState)
+                    .firstWhere((r) => r.id == recipe.id)
+                    .fav
+                    .contains(user?.uid);
+
+                final favCount = ref
+                    .watch(recipeProviderState)
+                    .firstWhere((r) => r.id == recipe.id)
+                    .fav
+                    .length;
 
             return ListTile(
               title: Row(
@@ -82,7 +103,7 @@ class ListPage extends ConsumerWidget {
                     ),
                     onPressed: () {
                       if (!isUserLoggedIn) return;
-                      ref.read(recipeProviderState.notifier).updateFavourite(recipe);
+                      ref.watch(recipeProviderState.notifier).updateFavourite(recipe);
                     },
                   ),
                   Text('$favCount'),

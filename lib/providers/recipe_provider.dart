@@ -7,11 +7,11 @@ import './user_provider.dart';
 
 class RecipeNotifier extends StateNotifier<List<Recipe>> {
   final String userId;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   RecipeNotifier({required this.userId}) : super([]) {
     _fetchRecipes();
   }
-
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void _fetchRecipes() async {
     final snapshot = await _firestore.collection('recipes').get();
@@ -91,8 +91,6 @@ PagingController<int, Recipe> getRecipesForCategory(Category category) {
   return pagingController;
 }
 
-
-
   void updateRecipe(Recipe updatedRecipe) async {
     if (userId == '' || userId != updatedRecipe.userId) {
       return;
@@ -116,9 +114,9 @@ PagingController<int, Recipe> getRecipesForCategory(Category category) {
       return;
     }
 
-    final List<String> favorites = List<String>.from(recipe.fav);
+    List favorites = recipe.fav;
 
-    if (favorites.contains(userId)) {
+    if (recipe.fav.contains(userId)) {        
       favorites.remove(userId);
     } else {
       favorites.add(userId);
@@ -134,10 +132,6 @@ PagingController<int, Recipe> getRecipesForCategory(Category category) {
       userId: recipe.userId,
       fav: favorites,
     );
-    final recipeData = updatedRecipe.toFirestore();
-
-    await _firestore.collection('recipes').doc(updatedRecipe.id).update(recipeData);
-
     state = state.map((recipe) {
       if (recipe.id == updatedRecipe.id) {
         return updatedRecipe;
@@ -145,21 +139,26 @@ PagingController<int, Recipe> getRecipesForCategory(Category category) {
         return recipe;
       }
     }).toList();
+    final recipeData = updatedRecipe.toFirestore();
+
+    await _firestore.collection('recipes').doc(recipe.id).update(recipeData);
+    
   } 
 }
 
-final recipeProviderState = StateNotifierProvider.autoDispose<RecipeNotifier, List<Recipe>>(
-  (ref) {
+final recipeProviderState = StateNotifierProvider<RecipeNotifier, List<Recipe>>(
+    (ref) {
     final asyncUser = ref.watch(userProvider);
-    return asyncUser.when(data: (user) {
-      return RecipeNotifier(userId: user?.uid ?? '');
-    }, loading: () {
-      return RecipeNotifier(userId: '');
-    }, error: (error, stackTrace) {
-      return RecipeNotifier(userId: '');
-    });
+    final notifier = asyncUser.when(
+      data: (user) => RecipeNotifier(userId: user?.uid ?? ''),
+      loading: () => RecipeNotifier(userId: ''),
+      error: (_, __) => RecipeNotifier(userId: ''),
+    );
+
+    return notifier;
   },
 );
+
 
 
 

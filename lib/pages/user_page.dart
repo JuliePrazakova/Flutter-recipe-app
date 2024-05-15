@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:second_project/pages/app_bar.dart';
 import '../providers/recipe_provider.dart';
 import 'add_recipe.dart';
 import 'recipe_detail.dart';
@@ -17,9 +18,7 @@ class UserPage extends ConsumerWidget {
     final favoriteRecipes = recipeProvider.where((recipe) => recipe.fav.contains(user?.uid)).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Recipes'),
-      ),
+      appBar: const MyAppBar(),
       body: Column(
         children: [
           Expanded(

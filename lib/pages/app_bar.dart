@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'list_page.dart';
-import 'user_page.dart'; 
 
 final searchTermProvider = StateProvider<String>((ref) => '');
 
@@ -35,8 +34,19 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
       centerTitle: true,
       backgroundColor: Colors.blue,
       iconTheme: const IconThemeData(color: Colors.white),
+      leading: _isMainPage(context)
+          ? null
+          : IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                if(ModalRoute.of(context)!.settings.name != '/') {
+                  Navigator.pushNamed(context, '/'); 
+                }
+                Navigator.popUntil(context, ModalRoute.withName('/'));
+              },
+            ),
       actions: [
-       IconButton(
+        IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
             ref
@@ -67,11 +77,11 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const UserPage()));
+              Navigator.pushNamed(context, '/user');
             },
           ),
 
-          IconButton(
+        IconButton(
           icon: const Icon(Icons.login),
           onPressed: () {
             Navigator.pushReplacementNamed(context, '/login');
@@ -83,4 +93,9 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  bool _isMainPage(BuildContext context) {
+    // Check if the current page is MainPage
+    return ModalRoute.of(context)!.settings.name == '/';
+  }
 }
