@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:second_project/pages/recipe_page.dart';
 import '../models/categories.dart'; 
 import './list_page.dart';
@@ -14,7 +15,7 @@ class MainPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeProvider = ref.watch(recipeProviderState); 
-    final categoryProvider = ref.watch(categoryProviderState); 
+    final pagingController = ref.watch(categoryProviderState); 
 
     return Scaffold(
       appBar: const MyAppBar(),
@@ -88,18 +89,20 @@ class MainPage extends ConsumerWidget {
                   const SizedBox(height: 16), 
 
                   // Display 3 categories
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: categoryProvider.length,
-                    itemBuilder: (context, index) {
-                      final Category category = categoryProvider[index];
-                      return ListTile(
-                        title: Text(category.name),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage(category: category)));
-                        },
-                      );
-                    },
+                  PagedListView<int, Category>(
+                    pagingController: pagingController,
+                    builderDelegate: PagedChildBuilderDelegate<Category>(
+                      itemBuilder: (context, category, index) {
+                        return ListTile(
+                          title: Text(category.name),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => ListPage(category: category)));
+                          },
+                        );
+                      },
+                    ),
+                    shrinkWrap: true, // Pro snížení výšky na minimální nutnou hodnotu
+                    physics: NeverScrollableScrollPhysics(), // Zamezení skrolování v rámci PagedListView
                   ),
                 ],
               ),
