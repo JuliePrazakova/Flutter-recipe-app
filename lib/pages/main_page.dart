@@ -48,13 +48,18 @@ class MainPage extends ConsumerWidget {
                             children: [
                               ListTile(
                                 title: const Placeholder(
-                                  fallbackHeight: 320,
+                                  fallbackHeight: 330,
                                 ),
-                                subtitle: Text(recipeProvider.first.name,
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    recipeProvider.first.name,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       fontSize: 28,
-                                    )),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
