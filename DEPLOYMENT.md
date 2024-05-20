@@ -2,4 +2,4 @@
 
 Write the URL where your application is deployed below.
 
-TODO: https://julieprazakova.github.io/Flutter-recipe-app/
+https://julieprazakova.github.io/Flutter-recipe-app/

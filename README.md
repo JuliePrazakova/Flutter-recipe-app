@@ -2,7 +2,7 @@
 
 ## Recipe app
 ### Description
-This recipe application simplifies cooking by providing a variety of recipes at your fingertips. Easily explore different cuisines, find ingredients, and follow simple steps to create delicious meals. With user-friendly features like search and categories, cooking has never been easier. Perfect for your school project!
+This recipe application simplifies cooking by providing a variety of recipes at your fingertips. Easily explore different cuisines, find ingredients, and follow simple steps to create delicious meals. With user-friendly features like search and categories, cooking has never been easier. Perfect for your school project! Create your own user account and add you favouritee recipe to zzour profile!
 
 ### 3 challenges during the development
 1. Smooth Scrolling: Implementing smooth scrolling proved to be quite challenging.
@@ -16,23 +16,23 @@ This recipe application simplifies cooking by providing a variety of recipes at 
 
 ### List of dependencies and their versions
 #### dependencies:
-  flutter:
-    sdk: flutter
-  infinite_scroll_pagination: ^4.0.0
-  cupertino_icons: ^1.0.2
-  flutter_riverpod: ^2.4.0
-  riverpod: ^2.4.0
-  firebase_core: ^2.27.0
-  cloud_firestore: ^4.15.8
-  firebase_auth: ^4.17.8
+- flutter:
+- sdk: flutter
+- infinite_scroll_pagination: ^4.0.0
+- cupertino_icons: ^1.0.2
+- flutter_riverpod: ^2.4.0
+- riverpod: ^2.4.0
+- firebase_core: ^2.27.0
+- cloud_firestore: ^4.15.8
+- firebase_auth: ^4.17.8
 
 #### dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.2
+- flutter_test:
+- sdk: flutter
+- flutter_lints: ^3.0.2
 
 ###  DB schema:
-#### categories; 
+#### categories: 
 - id(String) - auto ID 
 - name(String)
 - image(String)
