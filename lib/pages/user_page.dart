@@ -156,21 +156,6 @@ class UserPage extends ConsumerWidget {
         appBar: const MyAppBar(),
         body: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  const Icon(Icons.person, size: 40),
-                  const SizedBox(width: 20),
-                  Text(
-                    'Welcome user number ${user?.uid ?? 'Unknown'}!',
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
-              ),
-            ),
             SizedBox(height: 30),
             Expanded(
               child: Column(

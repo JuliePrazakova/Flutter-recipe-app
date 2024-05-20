@@ -90,40 +90,55 @@ class MainPage extends ConsumerWidget {
             const SizedBox(height: 16),
 
             // Explore Categories section
-            SizedBox(
-              height: 200, // Adjust height as needed
-              child: PagedListView<int, Category>(
-                pagingController: pagingController,
-                builderDelegate: PagedChildBuilderDelegate<Category>(
-                  itemBuilder: (context, category, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => ListPage(category: category)));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          children: [
-                            const Placeholder(
-                              fallbackWidth: 180, // Šířka placeholderu
-                              fallbackHeight: 120,
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final itemWidth = 180.0;
+                  final itemCount = constraints.maxWidth ~/ itemWidth;
+                  final crossAxisCount = itemCount == 0 ? 1 : itemCount;
+                  return PagedGridView<int, Category>(
+                    pagingController: pagingController,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: itemWidth / (itemWidth * 1.2),
+                    ),
+                    builderDelegate: PagedChildBuilderDelegate<Category>(
+                      itemBuilder: (context, category, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ListPage(category: category),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                const Placeholder(
+                                  fallbackWidth: 180,
+                                  fallbackHeight: 120,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  category.name,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 8),
-                            Text(category.name,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                )),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                scrollDirection: Axis.horizontal,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ),
           ],
