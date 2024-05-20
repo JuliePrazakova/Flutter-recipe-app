@@ -8,6 +8,7 @@ import './category_page.dart';
 import '../providers/recipe_provider.dart';
 import '../providers/category_provider.dart';
 import 'app_bar.dart';
+import 'breakpoints.dart';
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
@@ -30,10 +31,12 @@ class MainPage extends ConsumerWidget {
                 onTap: () {
                   if (recipeProvider.isNotEmpty) {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) =>
-                                RecipePage(recipe: recipeProvider.first)));
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            RecipePage(recipe: recipeProvider.first),
+                      ),
+                    );
                   }
                 },
                 child: Container(
@@ -76,9 +79,11 @@ class MainPage extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const CategoryPage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CategoryPage(),
+                        ),
+                      );
                     },
                     child: const Text(
                       'Explore All Categories',
@@ -98,19 +103,37 @@ class MainPage extends ConsumerWidget {
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final itemWidth = 180.0;
-                  final itemCount = constraints.maxWidth ~/ itemWidth;
-                  final crossAxisCount = itemCount == 0 ? 1 : itemCount;
+                  final double screenWidth = MediaQuery.of(context).size.width;
+                  final double itemWidth;
+                  final crossAxisCount;
+
+                  if (screenWidth > Breakpoints.xl) {
+                    crossAxisCount = 5;
+                    itemWidth = screenWidth / crossAxisCount - 12;
+                  } else if (screenWidth > Breakpoints.md) {
+                    crossAxisCount = 3;
+                    itemWidth = screenWidth / crossAxisCount - 12;
+                  } else {
+                    crossAxisCount = 2;
+                    itemWidth = screenWidth / crossAxisCount - 12;
+                  }
+
                   return PagedGridView<int, Category>(
+                    physics:
+                        const NeverScrollableScrollPhysics(), // Zamezí scrollování
                     pagingController: pagingController,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
                       childAspectRatio: itemWidth / (itemWidth * 1.2),
                     ),
                     builderDelegate: PagedChildBuilderDelegate<Category>(
                       itemBuilder: (context, category, index) {
+                        if (index >= crossAxisCount) {
+                          return const SizedBox
+                              .shrink(); // Skrýt kategorie po prvních 'crossAxisCount' položkách
+                        }
                         return InkWell(
                           onTap: () {
                             Navigator.push(

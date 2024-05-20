@@ -24,8 +24,8 @@ class CategoryPage extends ConsumerWidget {
             pagingController: pagingController,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
               childAspectRatio: itemWidth / (itemWidth * 1.2),
             ),
             builderDelegate: PagedChildBuilderDelegate<Category>(
