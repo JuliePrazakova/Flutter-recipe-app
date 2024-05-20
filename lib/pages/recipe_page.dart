@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/recipe.dart';
 import './app_bar.dart';
 import '../providers/recipe_provider.dart';
+import 'breakpoints.dart';
 
 class RecipePage extends ConsumerWidget {
   final Recipe recipe;
@@ -12,6 +13,7 @@ class RecipePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final size = MediaQuery.of(context).size;
     final user = FirebaseAuth.instance.currentUser;
     final isUserLoggedIn = user != null;
     final recipeProvider = ref.watch(recipeProviderState.notifier);
@@ -30,100 +32,183 @@ class RecipePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: const MyAppBar(),
-      body: Center(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Row(
+      body: size.width > Breakpoints.xl
+          ? Center(
+              child: Column(
                 children: [
-                  const Spacer(), // Pushes the name to the center
-                  Text(
-                    recipe.name,
-                    style: const TextStyle(fontSize: 28),
-                  ),
-                  const Spacer(), // Pushes the icon and count to the right
-                  Row(
-                    children: [
-                      Text('$favCount'),
-                      IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : null,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      children: [
+                        const Spacer(),
+                        Text(
+                          recipe.name,
+                          style: const TextStyle(fontSize: 28),
                         ),
-                        onPressed: () {
-                          if (!isUserLoggedIn) return;
-                          recipeProvider.updateFavourite(recipe);
-                        },
+                        const Spacer(),
+                        Row(
+                          children: [
+                            Text('$favCount'),
+                            IconButton(
+                              icon: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : null,
+                              ),
+                              onPressed: () {
+                                if (!isUserLoggedIn) return;
+                                recipeProvider.updateFavourite(recipe);
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Placeholder(
+                    fallbackHeight: 400,
+                    fallbackWidth: double.infinity,
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Ingredients:',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: recipe.ingredients.map((ingredient) {
+                                  return Text(
+                                    '- $ingredient',
+                                    style: const TextStyle(fontSize: 20),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Steps:',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:
+                                    recipe.steps.asMap().entries.map((entry) {
+                                  int index = entry.key + 1;
+                                  String step = entry.value;
+                                  return Text(
+                                    '$index. $step',
+                                    style: const TextStyle(fontSize: 20),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Row(
+                        children: [
+                          const Spacer(),
+                          Text(
+                            recipe.name,
+                            style: const TextStyle(fontSize: 28),
+                          ),
+                          const Spacer(),
+                          Row(
+                            children: [
+                              Text('$favCount'),
+                              IconButton(
+                                icon: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : null,
+                                ),
+                                onPressed: () {
+                                  if (!isUserLoggedIn) return;
+                                  recipeProvider.updateFavourite(recipe);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 16),
+                    const Placeholder(
+                      fallbackHeight: 400,
+                      fallbackWidth: double.infinity,
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Ingredients:',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: recipe.ingredients.map((ingredient) {
+                        return Text(
+                          '- $ingredient',
+                          style: const TextStyle(fontSize: 20),
+                        );
+                      }).toList(),
+                    ),
+                    const Divider(height: 32),
+                    const Text(
+                      'Steps:',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: recipe.steps.asMap().entries.map((entry) {
+                        int index = entry.key + 1;
+                        String step = entry.value;
+                        return Text(
+                          '$index. $step',
+                          style: const TextStyle(fontSize: 20),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-            const Placeholder(
-              fallbackHeight: 400,
-              fallbackWidth: double.infinity,
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 150.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Ingredients:',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: recipe.ingredients.map((ingredient) {
-                            return Text(
-                              '- $ingredient',
-                              style: const TextStyle(fontSize: 20),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Steps:',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: recipe.steps.asMap().entries.map((entry) {
-                            int index = entry.key + 1;
-                            String step = entry.value;
-                            return Text(
-                              '$index. $step',
-                              style: const TextStyle(fontSize: 20),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
