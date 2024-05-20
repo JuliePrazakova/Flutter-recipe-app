@@ -6,7 +6,6 @@ import '../models/categories.dart';
 import '../providers/category_provider.dart';
 import '../providers/recipe_provider.dart';
 import '../models/recipe.dart';
-import 'app_bar.dart';
 
 class AddRecipePage extends ConsumerWidget {
   const AddRecipePage({Key? key}) : super(key: key);

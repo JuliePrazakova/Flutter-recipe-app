@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/recipe_provider.dart'; 
+import '../providers/recipe_provider.dart';
 import '../models/recipe.dart';
 
 class RecipeDetailsPage extends ConsumerWidget {
@@ -10,28 +10,27 @@ class RecipeDetailsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController nameController = TextEditingController(text: recipe.name);
-    final TextEditingController categoryController = TextEditingController(text: recipe.categoryId);
-    final TextEditingController imageController = TextEditingController(text: recipe.image);
-    final TextEditingController ingredientsController = TextEditingController(text: recipe.ingredients.join('\n'));
-    final TextEditingController stepsController = TextEditingController(text: recipe.steps.join('\n'));
+    final TextEditingController nameController =
+        TextEditingController(text: recipe.name);
+    final TextEditingController imageController =
+        TextEditingController(text: recipe.image);
+    final TextEditingController ingredientsController =
+        TextEditingController(text: recipe.ingredients.join('\n'));
+    final TextEditingController stepsController =
+        TextEditingController(text: recipe.steps.join('\n'));
 
     return Scaffold(
       appBar: AppBar(
         title: Text(recipe.name),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 160.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextField(
               controller: nameController,
               decoration: const InputDecoration(labelText: 'Recipe Name'),
-            ),
-            TextField(
-              controller: categoryController,
-              decoration: const InputDecoration(labelText: 'Category'),
             ),
             TextField(
               controller: imageController,
@@ -64,6 +63,7 @@ class RecipeDetailsPage extends ConsumerWidget {
                 }
               },
             ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 if (nameController.text.isEmpty ||
@@ -75,7 +75,7 @@ class RecipeDetailsPage extends ConsumerWidget {
                   final updatedRecipe = Recipe(
                     id: recipe.id,
                     name: nameController.text,
-                    categoryId: categoryController.text,
+                    categoryId: recipe.categoryId,
                     image: imageController.text,
                     ingredients: ingredientsController.text.split('\n'),
                     steps: stepsController.text.split('\n'),
@@ -83,7 +83,9 @@ class RecipeDetailsPage extends ConsumerWidget {
                     fav: recipe.fav,
                   );
                   ref.read(showErrorMessagesProvider.notifier).setFalse();
-                  ref.watch(recipeProviderState.notifier).updateRecipe(updatedRecipe);
+                  ref
+                      .watch(recipeProviderState.notifier)
+                      .updateRecipe(updatedRecipe);
                   Navigator.pop(context);
                 }
               },
@@ -96,7 +98,9 @@ class RecipeDetailsPage extends ConsumerWidget {
   }
 }
 
-final showErrorMessagesProvider = StateNotifierProvider<ShowErrorMessages, bool>((ref) => ShowErrorMessages());
+final showErrorMessagesProvider =
+    StateNotifierProvider<ShowErrorMessages, bool>(
+        (ref) => ShowErrorMessages());
 
 class ShowErrorMessages extends StateNotifier<bool> {
   ShowErrorMessages() : super(false);
@@ -104,6 +108,7 @@ class ShowErrorMessages extends StateNotifier<bool> {
   void setTrue() {
     state = true;
   }
+
   void setFalse() {
     state = false;
   }
