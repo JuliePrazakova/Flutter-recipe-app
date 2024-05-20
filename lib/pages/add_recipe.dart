@@ -18,6 +18,9 @@ class AddRecipePage extends ConsumerWidget {
     final TextEditingController ingredientsController = TextEditingController();
     final TextEditingController stepsController = TextEditingController();
     final String? userId = _auth.currentUser?.uid;
+    final TextEditingController categoryTextController =
+        TextEditingController();
+
     final categoryController = StateController<String>('');
 
     return Scaffold(
@@ -25,14 +28,16 @@ class AddRecipePage extends ConsumerWidget {
         title: const Text('Add Recipe'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 160.0),
         child: Consumer(
           builder: (context, ref, child) {
             final showErrorMessages = ref.watch(showErrorMessagesProvider);
             final pagingController = ref.watch(categoryProviderState);
+            final selectedCategoryProvider =
+                StateProvider<String>((ref) => '-1');
 
             return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 TextField(
                   controller: nameController,
@@ -52,6 +57,11 @@ class AddRecipePage extends ConsumerWidget {
                   decoration: const InputDecoration(labelText: 'Steps'),
                   maxLines: null,
                 ),
+                TextField(
+                  readOnly: true,
+                  controller: categoryTextController,
+                  decoration: const InputDecoration(labelText: 'Category'),
+                ),
                 if (showErrorMessages)
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0),
@@ -60,22 +70,26 @@ class AddRecipePage extends ConsumerWidget {
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
-                 Expanded(
+                Flexible(
                   child: PagedListView<int, Category>(
                     pagingController: pagingController,
                     builderDelegate: PagedChildBuilderDelegate<Category>(
                       itemBuilder: (context, category, index) {
                         return ListTile(
                           title: Text(category.name),
+                          tileColor:
+                              ref.watch(selectedCategoryProvider) == category.id
+                                  ? Colors.blue.withOpacity(0.5)
+                                  : null,
                           onTap: () {
                             categoryController.state = category.id;
+                            categoryTextController.text = category.name;
                           },
                         );
                       },
                     ),
                   ),
                 ),
-
                 ElevatedButton(
                   onPressed: () {
                     if (nameController.text.isEmpty ||
@@ -95,11 +109,16 @@ class AddRecipePage extends ConsumerWidget {
                       fav: [],
                     );
                     ref.read(showErrorMessagesProvider.notifier).setFalse();
-                    ref.watch(recipeProviderState.notifier).addRecipe(newRecipe);
+                    ref
+                        .watch(recipeProviderState.notifier)
+                        .addRecipe(newRecipe);
                     Navigator.pop(context);
                   },
                   child: const Text('Add Recipe'),
                 ),
+                const Expanded(
+                  child: SizedBox(height: 16),
+                )
               ],
             );
           },
@@ -109,14 +128,17 @@ class AddRecipePage extends ConsumerWidget {
   }
 }
 
-final showErrorMessagesProvider = StateNotifierProvider<ShowErrorMessages, bool>((ref) => ShowErrorMessages());
+final showErrorMessagesProvider =
+    StateNotifierProvider<ShowErrorMessages, bool>(
+        (ref) => ShowErrorMessages());
 
 class ShowErrorMessages extends StateNotifier<bool> {
   ShowErrorMessages() : super(false);
 
- void setTrue() {
+  void setTrue() {
     state = true;
   }
+
   void setFalse() {
     state = false;
   }

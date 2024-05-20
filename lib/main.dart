@@ -4,6 +4,7 @@ import 'pages/main_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'pages/user_page.dart';
 
 void main() async {
   await Firebase.initializeApp(
@@ -28,6 +29,7 @@ class RecipeApp extends ConsumerWidget {
       routes: {
         '/': (context) => const MainPage(),
         '/login': (context) => const LoginPage(),
+        '/user': (context) => const UserPage(),
       },
     );
   }
