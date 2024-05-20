@@ -47,10 +47,8 @@ class MainPage extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ListTile(
-                                title: Container(
-                                  width: double.infinity,
-                                  height: 300, // Placeholder image height
-                                  color: Colors.grey[300],
+                                title: const Placeholder(
+                                  fallbackHeight: 320,
                                 ),
                                 subtitle: Text(recipeProvider.first.name,
                                     textAlign: TextAlign.center,
@@ -109,12 +107,9 @@ class MainPage extends ConsumerWidget {
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
                           children: [
-                            Container(
-                              width: 180, // Adjust image width
-                              height: 120, // Adjust image height
-                              color:
-                                  Colors.grey[300], // Placeholder image color
-                              // You can add actual images here
+                            const Placeholder(
+                              fallbackWidth: 180, // Šířka placeholderu
+                              fallbackHeight: 120,
                             ),
                             const SizedBox(height: 8),
                             Text(category.name,
